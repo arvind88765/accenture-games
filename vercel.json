@@ -1,0 +1,7 @@
+{
+  "rewrites": [
+    { "source": "/maze", "destination": "/key_door.html" },
+    { "source": "/math", "destination": "/bubbles.html" },
+    { "source": "/pathfinder", "destination": "/pathfinding.html" }
+  ]
+}
