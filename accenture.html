@@ -169,11 +169,6 @@
 
   .play-btn:active{ transform:translateY(2px); }
 
-  @media(max-width:900px){
-    .game-card{width:100%;max-width:360px;}
-    .games-row{gap:20px;}
-  }
-
   footer{
     margin-top:36px;
     font-size:12px;
@@ -203,6 +198,57 @@
     text-shadow:0 0 18px rgba(155,92,255,0.9);
   }
 
+  /* Coming Soon Modal */
+  .coming-modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.55);
+    backdrop-filter:blur(6px);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+  }
+
+  .coming-box{
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(155,92,255,0.22);
+    border-radius:18px;
+    padding:26px 32px;
+    width:300px;
+    text-align:center;
+    backdrop-filter:blur(10px) saturate(150%);
+    color:#e8e4ff;
+    box-shadow:0 20px 50px rgba(0,0,0,0.4);
+  }
+
+  .coming-box h2{
+    margin:0 0 10px;
+    font-size:20px;
+    color:#caa8ff;
+    text-shadow:0 0 10px rgba(155,92,255,0.7);
+  }
+
+  .coming-box p{
+    font-size:14px;
+    margin-bottom:18px;
+    color:#dcd6ff;
+  }
+
+  .close-btn{
+    padding:10px 18px;
+    width:100%;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(90deg,#8b5cf6,#6b21a8);
+    color:#fff;
+    font-weight:700;
+    cursor:pointer;
+    box-shadow:0 8px 22px rgba(124,58,237,0.25);
+  }
+
+  .hidden{display:none;}
+
 </style>
 </head>
 
@@ -226,11 +272,11 @@
         <div class="game-icon">🔐</div>
         <div>
           <div class="game-title">Key Maze Challenge</div>
-          <div class="game-desc">Collect keys, avoid invisible walls, escape the neon maze.</div>
+          <div class="game-desc">Collect Keys, avoid invisible walls, escape the neon maze.</div>
         </div>
       </div>
       <div class="card-footer">
-        <button class="play-btn" onclick="location.href='maze.html'">Play</button>
+        <button class="play-btn" onclick="location.href='key_door.html'">Play</button>
       </div>
     </div>
 
@@ -244,11 +290,11 @@
         </div>
       </div>
       <div class="card-footer">
-        <button class="play-btn" onclick="location.href='arithmetic.html'">Play</button>
+        <button class="play-btn" onclick="location.href='bubbles.html'">Play</button>
       </div>
     </div>
 
-    <!-- Game 3 -->
+    <!-- Game 3 (Updated ONLY THIS) -->
     <div class="game-card">
       <div class="game-top">
         <div class="game-icon">🧭</div>
@@ -258,7 +304,7 @@
         </div>
       </div>
       <div class="card-footer">
-        <button class="play-btn" onclick="location.href='pathfinding.html'">Play</button>
+        <button class="play-btn" onclick="showComingSoon()">Play</button>
       </div>
     </div>
 
@@ -267,9 +313,27 @@
   <footer>© Accenture Gaming • Neon Cyber Glass Edition</footer>
 </div>
 
+<!-- Coming Soon Modal -->
+<div id="comingSoonModal" class="coming-modal hidden">
+  <div class="coming-box">
+    <h2>🚧 Under Development</h2>
+    <p>This game is still being built.<br>It will be available soon!</p>
+    <button class="close-btn" onclick="closeComingSoon()">OK</button>
+  </div>
+</div>
+
 <!-- Signature -->
 <div class="signature">Made with ❤️ by Rvind</div>
 
+<script>
+function showComingSoon(){
+  document.getElementById("comingSoonModal").classList.remove("hidden");
+}
+
+function closeComingSoon(){
+  document.getElementById("comingSoonModal").classList.add("hidden");
+}
+</script>
+
 </body>
 </html>
-
