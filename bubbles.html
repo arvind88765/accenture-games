@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Bubble Sort Practice — Premium (Fixed)</title>
+<style>
+  :root{
+    --bg:#eef6ff;
+    --card:#ffffff;
+    --muted:#6b7280;
+    --accent:#09223a;
+    --primary:#2563eb;
+    --accent-2:#0b6bff;
+    --danger:#ef4444;
+    --bubble-bg:linear-gradient(180deg,#fbfdff,#f2f6ff);
+    --bubble-selected:linear-gradient(180deg,#eef3ff,#e0ebff);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;font-family:Inter,system-ui,Arial;
+    background:linear-gradient(180deg,var(--bg), #f8fbff);
+    color:var(--accent);display:flex;align-items:center;justify-content:center;
+    min-height:100vh;padding:18px;
+  }
+  .app{width:100%;max-width:980px;background:var(--card);border-radius:16px;padding:20px;box-shadow:0 18px 50px rgba(12,36,80,0.08);}
+  .header{text-align:center;font-size:22px;font-weight:900;margin-bottom:14px;}
+  .instructions{background:#fff;border-radius:14px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,0.04);}
+  .lets-btn{margin-top:14px;width:100%;padding:12px;border:none;border-radius:12px;font-size:16px;font-weight:800;background:linear-gradient(180deg,var(--primary),var(--accent-2));color:#fff;cursor:pointer;box-shadow:0 12px 40px rgba(37,99,235,0.14);}
+  .timer-card{background:#fff;padding:12px;border-radius:10px;border:1px solid #e6eef6;min-width:140px;text-align:center;}
+  .timer-label{font-size:12px;color:var(--muted);}
+  .timer-value{font-size:20px;font-weight:900;margin-top:4px;}
+  .board-card{background:#fff;padding:22px;border-radius:14px;margin-top:16px;box-shadow:0 14px 40px rgba(8,18,40,0.06);}
+  .bubbles-row{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;margin-top:20px;}
+  .bubble{width:160px;height:160px;border-radius:50%;background:var(--bubble-bg);display:flex;justify-content:center;align-items:center;font-size:22px;font-weight:900;box-shadow:0 16px 40px rgba(10,40,90,0.06);cursor:pointer;transition:transform .18s,box-shadow .14s,opacity .12s,background .16s;text-align:center;padding:12px;}
+  .bubble:hover{transform:translateY(-6px);box-shadow:0 24px 60px rgba(10,40,90,0.10);}
+  .bubble.selected{background:var(--bubble-selected);transform:scale(.92);opacity:.95;box-shadow:0 10px 30px rgba(10,40,90,0.04);}
+  .bubble.small{width:120px;height:120px;font-size:18px}
+  .selBadge{position:relative;margin-left:8px;display:inline-block;font-size:12px;color:#fff;background:var(--primary);padding:6px 10px;border-radius:999px;font-weight:800;box-shadow:0 6px 20px rgba(37,99,235,0.12);margin-top:8px}
+  .controls{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+  .btn{padding:10px 14px;border-radius:12px;border:none;cursor:pointer;font-weight:800;background:var(--primary);color:#fff;box-shadow:0 12px 36px rgba(37,99,235,0.12)}
+  .btn.ghost{background:transparent;color:var(--accent);border:1px solid rgba(10,40,90,0.04);box-shadow:none}
+  .btn.danger{background:var(--danger);box-shadow:0 12px 32px rgba(239,68,68,0.12)}
+  .summary-card{margin-top:18px;padding:14px;border-radius:12px;background:#fff;border:1px solid rgba(12,40,90,0.03)}
+  table{width:100%;border-collapse:collapse;margin-top:8px}
+  th,td{padding:10px;border:1px solid rgba(14,60,120,0.06);text-align:center}
+  th{background:#fbfdff;color:var(--muted);font-weight:700}
+  .footer{margin-top:12px;text-align:center;color:var(--muted);font-size:13px}
+  @media (max-width:720px){
+    .bubble{width:120px;height:120px;font-size:18px}
+    .bubble.small{width:96px;height:96px;font-size:14px}
+    .lets-btn{width:100%}
+  }
+</style>
+</head>
+<body>
+<div class="app" role="application" aria-label="Bubble Sort Practice">
+  <div class="header">Bubble Sort Practice — 3 Bubbles (Lowest → Highest)</div>
+
+  <div id="introPanel" class="instructions">
+    <h3>How to Play</h3>
+    <ul>
+      <li>Select bubbles from <strong>LOWEST → HIGHEST</strong>.</li>
+      <li>You can <strong>unselect</strong> any bubble by tapping it again (only that bubble will be removed).</li>
+      <li>Each round has <strong>15 seconds</strong>.</li>
+      <li>Entire session lasts <strong>7 minutes</strong>.</li>
+      <li>After selecting 3 bubbles the round automatically advances.</li>
+      <li>Press <strong>Stop / Submit</strong> to view session summary (Rounds Played, Correct, Wrong, Accuracy).</li>
+    </ul>
+    <button id="letsPractice" class="lets-btn" aria-label="Let's practice">Let's Practice</button>
+  </div>
+
+  <div id="gameArea" style="display:none;margin-top:10px;">
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+      <div class="timer-card">
+        <div class="timer-label">Session time left</div>
+        <div id="sessionTimer" class="timer-value">7:00</div>
+      </div>
+      <div class="timer-card">
+        <div class="timer-label">Round time left</div>
+        <div id="roundTimer" class="timer-value">0:15</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="boardCard" class="board-card" style="display:none;">
+    <div id="roundInfo" style="font-size:14px;color:var(--muted);text-align:center;">Round: 0</div>
+    <div id="bubblesRow" class="bubbles-row" aria-live="polite"></div>
+
+    <div class="controls">
+      <button id="restartBtn" class="btn ghost">Restart Round</button>
+      <button id="stopBtn" class="btn danger">Stop / Submit</button>
+      <button id="soundToggle" class="btn ghost">Sound: ON</button>
+    </div>
+
+    <div id="summaryCard" class="summary-card" style="display:none">
+      <div style="font-weight:900;margin-bottom:8px">Session Summary</div>
+      <table aria-label="Session Summary Table">
+        <thead><tr><th>Rounds Played</th><th>Correct Rounds</th><th>Incorrect Rounds</th><th>Accuracy</th></tr></thead>
+        <tbody>
+          <tr>
+            <td id="sumRounds">0</td>
+            <td id="sumCorrect">0</td>
+            <td id="sumWrong">0</td>
+            <td id="sumAcc">0%</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="text-align:center;margin-top:12px">
+        <button id="closeSummary" class="btn">Close</button>
+      </div>
+    </div>
+
+    <div class="footer">Tip: rounds start easy and get harder. You can unselect any chosen bubble by tapping it again.</div>
+  </div>
+</div>
+
+<script>
+// ---------- State ----------
+let sessionSeconds = 7*60;
+let roundSeconds = 15;
+let sessionTimer = null;
+let roundTimer = null;
+let sessionRunning = false;
+
+let roundIndex = 0;
+let roundsPlayed = 0;
+let correctRounds = 0;
+let wrongRounds = 0;
+
+let bubbles = [];
+let selectedOrder = [];
+let soundOn = true;
+
+// ---------- DOM ----------
+const introPanel = document.getElementById('introPanel');
+const letsPractice = document.getElementById('letsPractice');
+const gameArea = document.getElementById('gameArea');
+const boardCard = document.getElementById('boardCard');
+const bubblesRow = document.getElementById('bubblesRow');
+const roundInfo = document.getElementById('roundInfo');
+const sessionTimerEl = document.getElementById('sessionTimer');
+const roundTimerEl = document.getElementById('roundTimer');
+const restartBtn = document.getElementById('restartBtn');
+const stopBtn = document.getElementById('stopBtn');
+const soundToggle = document.getElementById('soundToggle');
+const summaryCard = document.getElementById('summaryCard');
+const sumRounds = document.getElementById('sumRounds');
+const sumCorrect = document.getElementById('sumCorrect');
+const sumWrong = document.getElementById('sumWrong');
+const sumAcc = document.getElementById('sumAcc');
+const closeSummary = document.getElementById('closeSummary');
+
+// ---------- Helpers ----------
+function formatTime(s){ const m = Math.floor(s/60); const sec = s%60; return `${m}:${sec < 10 ? '0'+sec : sec}`; }
+function rand(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } }
+
+// ---------- Difficulty (user requested) ----------
+function difficultyForRound(r){
+  // r is 0-based round index. User requested:
+  // rounds 1-8 => easy, 8-17 => medium, 17+ => hard
+  if(r < 8) return 0;      // Easy: rounds 1–8
+  if(r < 17) return 1;     // Medium: rounds 9–17 (r indexes 8..16)
+  return 2;                // Hard: 17+
+}
+
+// ---------- Expression generation ----------
+function genExpression(level){
+  const ops = ['+','-','*','/'];
+  let op = ops[Math.floor(Math.random()*ops.length)];
+  let a,b;
+  if(level === 0){
+    a = rand(1,9); b = rand(0,9);
+  } else if(level === 1){
+    a = rand(2,20); b = rand(1,12);
+  } else {
+    a = rand(5,99); b = rand(2,50);
+  }
+  if(op === '/' && Math.random() < 0.65){
+    b = rand(1,9);
+    a = a * b;
+  }
+  let val;
+  if(op === '+') val = a + b;
+  if(op === '-') val = a - b;
+  if(op === '*') val = a * b;
+  if(op === '/') val = Math.round((a / b) * 100) / 100;
+  return { expr: `${a} ${op} ${b}`, value: val };
+}
+
+// ---------- Round creation ----------
+function generateRound(){
+  const level = difficultyForRound(roundIndex);
+  const arr = [];
+  for(let i=0;i<3;i++) arr.push(genExpression(level));
+  // avoid exact duplicates by small tweak
+  for(let i=0;i<arr.length;i++){
+    for(let j=i+1;j<arr.length;j++){
+      if(Math.abs(arr[i].value - arr[j].value) < 1e-9){
+        arr[j].value += 0.001 * (j+1);
+      }
+    }
+  }
+  shuffle(arr);
+  return arr;
+}
+
+// ---------- Render ----------
+function renderBubbles(){
+  bubblesRow.innerHTML = '';
+  const smallClass = (window.innerWidth < 420) ? 'small' : '';
+  bubbles.forEach((b, idx) => {
+    const div = document.createElement('div');
+    div.className = `bubble ${smallClass}` + (selectedOrder.indexOf(idx)!==-1 ? ' selected' : '');
+    div.dataset.index = idx;
+    div.setAttribute('role','button');
+    div.setAttribute('aria-label', `Bubble ${idx+1}: ${b.expr}`);
+    let inner = `<div style="pointer-events:none">${b.expr}</div>`;
+    const selIdx = selectedOrder.indexOf(idx);
+    if(selIdx !== -1) inner += `<div class="selBadge" aria-hidden="true">${selIdx+1}</div>`;
+    div.innerHTML = inner;
+    // toggles selection on click (unselect if selected)
+    div.addEventListener('click', ()=> toggleSelection(idx));
+    bubblesRow.appendChild(div);
+  });
+  roundInfo.textContent = `Round: ${roundIndex+1}`;
+}
+
+// ---------- Sound ----------
+function playClick(){
+  if(!soundOn) return;
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = 'sine';
+    o.frequency.value = 880;
+    g.gain.value = 0.02;
+    o.connect(g); g.connect(ctx.destination);
+    o.start(0); o.stop(ctx.currentTime + 0.06);
+  }catch(e){}
+}
+
+// ---------- Selection logic (Option A: remove only that bubble) ----------
+function toggleSelection(idx){
+  if(!sessionRunning) return;
+  const pos = selectedOrder.indexOf(idx);
+  if(pos !== -1){
+    // unselect this one only
+    selectedOrder.splice(pos, 1);
+    renderBubbles();
+    return;
+  }
+  if(selectedOrder.length >= 3) return; // ignore extra
+  selectedOrder.push(idx);
+  playClick();
+  renderBubbles();
+  if(selectedOrder.length >= 3){
+    setTimeout(evaluateSelection, 280);
+  }
+}
+
+// ---------- Evaluate ----------
+function evaluateSelection(){
+  const picked = selectedOrder.map(i => bubbles[i].value);
+  const expected = bubbles.map(b=>b.value).slice().sort((a,b)=>a-b);
+  let correct = true;
+  for(let i=0;i<3;i++){
+    if(Math.abs(picked[i] - expected[i]) > 1e-6){ correct = false; break; }
+  }
+  roundsPlayed++;
+  if(correct) correctRounds++; else wrongRounds++;
+  selectedOrder = [];
+  // next round after short delay so UI shows last selection
+  setTimeout(()=> {
+    if(sessionSeconds <= 0) endSession(); else startNextRound();
+  }, 420);
+}
+
+// ---------- Round/session flow ----------
+function startNextRound(){
+  clearInterval(roundTimer);
+  roundIndex++;
+  bubbles = generateRound();
+  selectedOrder = [];
+  renderBubbles();
+  roundSeconds = 15;
+  roundTimerEl.textContent = formatTime(roundSeconds);
+  roundTimer = setInterval(()=>{
+    roundSeconds--;
+    roundTimerEl.textContent = formatTime(roundSeconds);
+    if(roundSeconds <= 0){
+      clearInterval(roundTimer);
+      roundsPlayed++; wrongRounds++;
+      if(sessionSeconds <= 0) endSession(); else startNextRound();
+    }
+  },1000);
+}
+
+function startSession(){
+  if(sessionRunning) return;
+  sessionRunning = true;
+  roundIndex = 0; roundsPlayed=0; correctRounds=0; wrongRounds=0;
+  sessionSeconds = 7*60;
+  sessionTimerEl.textContent = formatTime(sessionSeconds);
+  // show UI
+  introPanel.style.display = 'none';
+  gameArea.style.display = 'flex';
+  boardCard.style.display = 'block';
+  summaryCard.style.display = 'none';
+  // session timer
+  clearInterval(sessionTimer);
+  sessionTimer = setInterval(()=>{
+    sessionSeconds--;
+    sessionTimerEl.textContent = formatTime(sessionSeconds);
+    if(sessionSeconds <= 0){
+      clearInterval(sessionTimer);
+      endSession();
+    }
+  },1000);
+  // start first round immediately
+  startNextRound();
+}
+
+function endSession(){
+  sessionRunning = false;
+  clearInterval(sessionTimer);
+  clearInterval(roundTimer);
+  summaryCard.style.display = 'block';
+  sumRounds.textContent = roundsPlayed;
+  sumCorrect.textContent = correctRounds;
+  sumWrong.textContent = wrongRounds;
+  const acc = roundsPlayed === 0 ? 0 : Math.round((correctRounds/roundsPlayed)*100);
+  sumAcc.textContent = acc + '%';
+}
+
+// ---------- Controls ----------
+letsPractice.addEventListener('click', startSession);
+
+restartBtn.addEventListener('click', ()=>{
+  clearInterval(roundTimer);
+  bubbles = generateRound();
+  selectedOrder = [];
+  renderBubbles();
+  roundSeconds = 15;
+  roundTimerEl.textContent = formatTime(roundSeconds);
+  roundTimer = setInterval(()=>{
+    roundSeconds--;
+    roundTimerEl.textContent = formatTime(roundSeconds);
+    if(roundSeconds <= 0){
+      clearInterval(roundTimer);
+      roundsPlayed++; wrongRounds++;
+      if(sessionSeconds <= 0) endSession(); else startNextRound();
+    }
+  },1000);
+});
+
+stopBtn.addEventListener('click', endSession);
+
+soundToggle.addEventListener('click', ()=>{
+  soundOn = !soundOn;
+  soundToggle.textContent = soundOn ? 'Sound: ON' : 'Sound: OFF';
+});
+
+closeSummary.addEventListener('click', ()=>{
+  // go back to intro and reset UI
+  summaryCard.style.display = 'none';
+  introPanel.style.display = 'block';
+  gameArea.style.display = 'none';
+  boardCard.style.display = 'none';
+  // reset counts so user can start fresh
+  roundIndex = 0; roundsPlayed = 0; correctRounds = 0; wrongRounds = 0;
+  sessionSeconds = 7*60; roundSeconds = 15;
+  sessionTimerEl.textContent = formatTime(sessionSeconds);
+  roundTimerEl.textContent = formatTime(roundSeconds);
+  bubbles = [];
+  selectedOrder = [];
+});
+
+// ---------- Init ----------
+introPanel.style.display = 'block';
+gameArea.style.display = 'none';
+boardCard.style.display = 'none';
+sessionTimerEl.textContent = formatTime(sessionSeconds);
+roundTimerEl.textContent = formatTime(roundSeconds);
+
+// re-render on resize so small class updates
+window.addEventListener('resize', ()=> { if(bubbles && bubbles.length) renderBubbles(); });
+
+</script>
+</body>
+</html>

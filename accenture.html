@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Accenture Gaming — Neon Glass</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg-1:#08060a;
+    --glow-purple:#9b5cff;
+    --accent-1:#7c3aed;
+    --accent-2:#5b21b6;
+    --glass:rgba(255,255,255,0.04);
+    --muted:#9aa3b2;
+    --card-bg:rgba(255,255,255,0.03);
+    --radius:18px;
+  }
+
+  *{box-sizing:border-box}
+
+  body{
+    margin:0;
+    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+    color:#e2e7f0;
+    background:
+      radial-gradient(800px 400px at 10% 10%, rgba(124,58,237,0.12), transparent 10%),
+      radial-gradient(700px 300px at 90% 80%, rgba(59,130,246,0.06), transparent 8%),
+      linear-gradient(180deg,#03030a,#0a0710);
+    min-height:100vh;
+    padding:40px 20px;
+    display:flex;
+    justify-content:center;
+  }
+
+  .wrap{
+    width:100%;
+    max-width:1100px;
+    text-align:center;
+    position:relative;
+  }
+
+  .bg-blur{
+    position:absolute;
+    inset:-20%;
+    background:
+      radial-gradient(600px 300px at 12% 20%, rgba(155,92,255,0.12), transparent 10%),
+      radial-gradient(500px 260px at 88% 82%, rgba(124,58,237,0.08), transparent 10%);
+    filter:blur(60px) saturate(130%);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  header{
+    z-index:2;
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    margin-bottom:32px;
+  }
+
+  .logo-wrap{
+    width:110px;
+    height:110px;
+    border-radius:26px;
+    overflow:hidden;
+    padding:6px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    box-shadow:0 18px 50px rgba(124,58,237,0.24);
+    border:1px solid rgba(255,255,255,0.05);
+  }
+
+  .logo-wrap img{
+    width:100%;height:100%;object-fit:cover;border-radius:20px;
+  }
+
+  .title{
+    margin-top:14px;
+    color:var(--accent-2);
+    font-size:28px;
+    font-weight:800;
+    letter-spacing:.5px;
+    text-shadow:0 4px 16px rgba(124,58,237,0.3);
+  }
+
+  /* Game Cards */
+  .games-row{
+    margin-top:38px;
+    display:flex;
+    justify-content:center;
+    gap:28px;
+    flex-wrap:wrap;
+    z-index:2;
+    position:relative;
+  }
+
+  .game-card{
+    width:340px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015));
+    border-radius:18px;
+    padding:22px;
+    border:1px solid rgba(124,58,237,0.14);
+    box-shadow:0 20px 48px rgba(5,4,10,0.65);
+    backdrop-filter:blur(8px) saturate(150%);
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    text-align:left;
+    transition:transform .25s ease, box-shadow .25s, border-color .25s;
+  }
+
+  .game-card:hover{
+    transform:translateY(-14px);
+    border-color:rgba(155,92,255,0.4);
+    box-shadow:0 28px 70px rgba(9,6,15,0.8);
+  }
+
+  .game-top{
+    display:flex;gap:16px;align-items:center;margin-bottom:10px;
+  }
+
+  .game-icon{
+    width:70px;height:70px;border-radius:18px;
+    background:linear-gradient(180deg, rgba(124,58,237,0.14), rgba(124,58,237,0.06));
+    border:1px solid rgba(155,92,255,0.20);
+    box-shadow:0 12px 28px rgba(124,58,237,0.22);
+    font-size:34px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--accent-1);
+  }
+
+  .game-title{
+    font-size:20px;
+    font-weight:700;
+    margin:0;
+    color:#f3f3f7;
+  }
+
+  .game-desc{
+    font-size:14px;
+    color:var(--muted);
+    margin-top:6px;
+    line-height:1.45;
+  }
+
+  .card-footer{
+    display:flex;
+    width:100%;
+    margin-top:22px;
+  }
+
+  .play-btn{
+    flex:1;
+    padding:14px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(90deg,#8b5cf6,#6b21a8);
+    font-weight:800;
+    color:white;
+    cursor:pointer;
+    box-shadow:0 14px 34px rgba(124,58,237,0.22);
+    transition:transform .18s;
+  }
+
+  .play-btn:active{ transform:translateY(2px); }
+
+  @media(max-width:900px){
+    .game-card{width:100%;max-width:360px;}
+    .games-row{gap:20px;}
+  }
+
+  footer{
+    margin-top:36px;
+    font-size:12px;
+    color:rgba(255,255,255,0.28);
+  }
+
+  /* Signature */
+  .signature{
+    position:fixed;
+    bottom:18px;
+    right:22px;
+    font-size:14px;
+    font-weight:600;
+    color:rgba(155,92,255,0.85);
+    text-shadow:0 0 10px rgba(155,92,255,0.6);
+    backdrop-filter:blur(4px);
+    padding:6px 12px;
+    border-radius:12px;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(155,92,255,0.12);
+    box-shadow:0 6px 20px rgba(0,0,0,0.45);
+    transition:.25s;
+  }
+  .signature:hover{
+    color:white;
+    transform:translateY(-2px);
+    text-shadow:0 0 18px rgba(155,92,255,0.9);
+  }
+
+</style>
+</head>
+
+<body>
+<div class="wrap">
+  <div class="bg-blur"></div>
+
+  <header>
+    <div class="logo-wrap">
+      <img src="E:\logo.png">
+    </div>
+    <div class="title">Accenture Gaming</div>
+  </header>
+
+  <!-- Game Cards -->
+  <div class="games-row">
+
+    <!-- Game 1 -->
+    <div class="game-card">
+      <div class="game-top">
+        <div class="game-icon">🔐</div>
+        <div>
+          <div class="game-title">Key Maze Challenge</div>
+          <div class="game-desc">Collect keys, avoid invisible walls, escape the neon maze.</div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <button class="play-btn" onclick="location.href='maze.html'">Play</button>
+      </div>
+    </div>
+
+    <!-- Game 2 -->
+    <div class="game-card">
+      <div class="game-top">
+        <div class="game-icon">🧮</div>
+        <div>
+          <div class="game-title">Arithmetic Duel</div>
+          <div class="game-desc">Fast-paced math drills testing accuracy & speed.</div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <button class="play-btn" onclick="location.href='arithmetic.html'">Play</button>
+      </div>
+    </div>
+
+    <!-- Game 3 -->
+    <div class="game-card">
+      <div class="game-top">
+        <div class="game-icon">🧭</div>
+        <div>
+          <div class="game-title">Pathfinder Logic</div>
+          <div class="game-desc">Find the optimal route with strategic reasoning.</div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <button class="play-btn" onclick="location.href='pathfinding.html'">Play</button>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>© Accenture Gaming • Neon Cyber Glass Edition</footer>
+</div>
+
+<!-- Signature -->
+<div class="signature">Made with ❤️ by Rvind</div>
+
+</body>
+</html>
