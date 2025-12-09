@@ -4,301 +4,351 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Hidden Maze Challenge — 3×3 Practice</title>
-
-<!-- FIXED FAVICON -->
-<link rel="icon" type="image/png" href="/favicon-32x32.png">
-<link rel="shortcut icon" type="image/png" href="/favicon-32x32.png">
-
 <style>
-  :root{
-    --bg:#f3f5f7;
-    --panel:#ffffff;
-    --muted:#6b7280;
-    --accent:#0f1724;
-    --tile:#f8fafc;
-    --player:#0b2948;
-    --path:#d7ecff;
+  :root {
+    --bg: #f3f4f6;
+    --panel: #ffffff;
+    --accent: #111827;
   }
-  body{
-    margin:0;
-    font-family:Inter,system-ui,Arial;
-    background:var(--bg);
-    color:var(--accent);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    min-height:100vh;
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
   }
 
-  .app{
-    width:760px;
-    background:var(--panel);
-    border-radius:12px;
-    padding:20px;
-    box-shadow:0 12px 38px rgba(0,0,0,0.08);
+  .app {
+    width: 780px;
+    max-width: 95vw;
+    background: var(--panel);
+    border-radius: 16px;
+    padding: 20px 22px 22px;
+    box-shadow: 0 14px 40px rgba(15,23,42,0.15);
   }
-  .header{
-    font-size:22px;
-    font-weight:700;
-    text-align:center;
-    margin-bottom:14px;
-  }
-
-  /* Instructions Panel */
-  .instructions-box{
-    background:#fbfdff;
-    border:1px solid #e5e9ef;
-    border-radius:10px;
-    padding:16px;
-    line-height:1.48;
-  }
-  .instructions-box h3{
-    margin-top:0;
-    margin-bottom:10px;
-    font-size:17px;
-  }
-  .instructions-box ul{
-    margin:0;
-    padding-left:18px;
-    color:#374151;
-  }
-  .instructions-box li{
-    margin-bottom:8px;
-    font-size:14px;
+  .header {
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 14px;
   }
 
-  .btn{
-    padding:10px 14px;
-    background:#0f1724;
-    color:white;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:700;
-    width:100%;
-    margin-top:12px;
+  .instructions-box {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px 18px;
+    line-height: 1.48;
+  }
+  .instructions-box h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 17px;
+  }
+  .instructions-box ul {
+    margin: 0;
+    padding-left: 18px;
+    color: #374151;
+  }
+  .instructions-box li {
+    margin-bottom: 8px;
+    font-size: 14px;
   }
 
-  /* Game Area */
-  .hidden{display:none !important;}
-
-  .timer{
-    font-size:24px;
-    font-weight:700;
-    text-align:center;
-    margin-bottom:12px;
+  .btn {
+    padding: 10px 14px;
+    background: #111827;
+    color: white;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 600;
+    width: 100%;
+    margin-top: 12px;
+    font-size: 14px;
+  }
+  .btn:hover {
+    background: #020617;
+  }
+  .btn-red {
+    background: #b91c1c;
+  }
+  .btn-red:hover {
+    background: #991b1b;
   }
 
-  .grid{
-    width:260px;
-    background:#fff;
-    border-radius:12px;
-    border:1px solid #e6edf3;
-    padding:12px;
-    display:grid;
-    grid-template-columns: repeat(3, 1fr); /* <<< FIX: 3×3 grid layout */
-    gap:8px;
-    margin:0 auto;
+  .hidden { display: none !important; }
+
+  .timer {
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 12px;
   }
 
-  .cell{
-    width:72px;
-    height:72px;
-    background:var(--tile);
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    transition:background .18s,transform .14s;
-  }
-  .cell.path{
-    background:var(--path);
-    box-shadow:0 0 14px 5px rgba(0,130,255,0.25);
-  }
-  .player{
-    width:58px;height:58px;background:var(--player);border-radius:6px;
-    display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;
-  }
-  .key{font-size:22px}
-  .door{font-size:26px}
-
-  .cell.hit{animation:hit .28s;background:#ffe0e0}
-  @keyframes hit{0%{transform:scale(1.08);background:#ffcccc;}100%{transform:none}}
-
-  .shake{animation:shakeAnim .45s}
-  @keyframes shakeAnim{
-    0%{transform:translateX(0)}
-    20%{transform:translateX(-4px)}
-    40%{transform:translateX(4px)}
-    60%{transform:translateX(-3px)}
-    80%{transform:translateX(3px)}
-    100%{transform:translateX(0)}
+  .grid {
+    width: 280px;
+    height: 280px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    margin: 0 auto 10px auto;
+    background: #fff;
+    border: 2px solid #d1d5db;
   }
 
-  .controls{
-    text-align:center;
-    margin-top:14px;
-  }
-  .btn-red{
-    background:#b91c1c;
+  .cell {
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    transition: background .18s, transform .14s;
   }
 
-  /* Summary */
-  table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:14px;
+  /* visited path cells (trail) */
+  .cell.path {
+    background: #222 !important;
   }
-  th,td{
-    border:1px solid #e6edf3;
-    padding:8px;
-    text-align:center;
+
+  /* player cell */
+  .player-cell {
+    background: #000 !important;
   }
-  th{
-    background:#f1f5f9;
-    color:#374151;
-    font-weight:600;
+
+  /* PERSON ICON */
+  .player-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  /* Key & Door */
+  .key {
+    font-size: 24px;
+    color: #000;
+  }
+  .door {
+    width: 26px;
+    height: 38px;
+    border: 3px solid #000;
+    border-radius: 3px;
+    position: relative;
+  }
+  .door::after {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background: #000;
+    border-radius: 50%;
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  /* wall-hit red flash */
+  .hit {
+    animation: hitAnim .25s;
+    background: #fecaca !important;
+  }
+  @keyframes hitAnim {
+    0% { background: #fca5a5; }
+    100% { background: #fecaca; }
+  }
+
+  .shake {
+    animation: shakeAnim .4s;
+  }
+  @keyframes shakeAnim {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 14px;
+    font-size: 14px;
+  }
+  th, td {
+    border: 1px solid #e5e7eb;
+    padding: 8px;
+    text-align: center;
+  }
+  th {
+    background: #f3f4f6;
+  }
+
+  /* Toast popup */
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #111827;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease;
+    z-index: 9999;
+  }
+  .toast.show {
+    opacity: 1;
   }
 </style>
 </head>
 
 <body>
+
+<!-- Toast message -->
+<div id="toast" class="toast"></div>
+
 <div class="app">
 
   <div class="header">Hidden Maze Challenge — 3×3 Practice</div>
 
-  <!-- INSTRUCTIONS SCREEN -->
   <div id="intro" class="instructions-box">
     <h3>How to Play</h3>
     <ul>
-      <li>This is a 3×3 hidden maze with invisible walls.</li>
-      <li>Move using your mouse or Arrow keys (W/A/S/D).</li>
-      <li>Collect all keys shown inside the maze.</li>
-      <li>The door will unlock only after collecting all keys.</li>
-      <li>Hitting an invisible wall sends you back to the start and resets keys.</li>
-      <li>Your travelled path glows so you can track where you’ve been.</li>
-      <li>You have 3 minutes per round. New rounds start automatically.</li>
+      <li>3×3 hidden maze with invisible walls</li>
+      <li>Move using mouse or Arrow keys (W/A/S/D)</li>
+      <li>Collect all keys inside the maze</li>
+      <li>The door unlocks only after collecting all keys</li>
+      <li>Hitting a hidden wall flashes red and resets you</li>
+      <li>Your travelled path turns dark so you can track it</li>
+      <li>You have 3 minutes per round</li>
     </ul>
     <button id="letsStart" class="btn">Start Practice</button>
   </div>
 
-  <!-- GAME SCREEN -->
   <div id="game" class="hidden">
     <div id="timer" class="timer">3:00</div>
     <div id="grid" class="grid"></div>
-
-    <div class="controls">
-      <button id="stopSubmit" class="btn btn-red">Stop / Submit</button>
-    </div>
+    <p style="text-align:center;">
+      Collect <b id="keysLabel">1 KEY</b> then get to the <b>DOOR</b>
+    </p>
+    <button id="stopSubmit" class="btn btn-red">Stop / Submit</button>
   </div>
 
-  <!-- SUMMARY SCREEN -->
   <div id="summary" class="hidden">
     <h3>Session Summary</h3>
-    <table id="summaryTable">
+    <table>
       <thead>
-        <tr><th>Round</th><th>Time Taken</th><th>Moves</th><th>Keys</th></tr>
+        <tr><th>Round</th><th>Time</th><th>Moves</th><th>Keys</th></tr>
       </thead>
-      <tbody></tbody>
+      <tbody id="summaryTable"></tbody>
     </table>
-
-    <button id="closeSummary" class="btn" style="margin-top:12px">Close</button>
+    <button id="closeSummary" class="btn">Close</button>
   </div>
 
 </div>
 
 <script>
-/* ------------------------
-   GAME LOGIC  (unchanged)
------------------------- */
-
 const ROWS = 3, COLS = 3;
 let round = 0;
 let player = {r:1,c:1};
 let startPos = {r:1,c:1};
 let door = {r:2,c:2};
-let keys=[], originalKeys=[];
-let keysNeeded=1, keysCollected=0;
-let moves=0, running=false;
-let roundSeconds=180, roundTimer=null;
-let roundStartTime=0;
-let cells=[];
-let sessionResults=[];
+let keys = [], originalKeys = [];
+let keysNeeded = 1, keysCollected = 0;
+let moves = 0, running = false;
+let roundSeconds = 180, roundTimer = null;
+let roundStartTime = 0;
+let cells = [];
+let sessionResults = [];
 
-const introEl=document.getElementById("intro");
-const gameEl=document.getElementById("game");
-const summaryEl=document.getElementById("summary");
-const summaryTableBody=document.querySelector("#summaryTable tbody");
-const timerEl=document.getElementById("timer");
-const gridEl=document.getElementById("grid");
+const introEl = document.getElementById("intro");
+const gameEl = document.getElementById("game");
+const summaryEl = document.getElementById("summary");
+const gridEl = document.getElementById("grid");
+const timerEl = document.getElementById("timer");
+const summaryTable = document.getElementById("summaryTable");
+const keysLabelEl = document.getElementById("keysLabel");
 
-const letsStartBtn=document.getElementById("letsStart");
-const stopSubmitBtn=document.getElementById("stopSubmit");
-const closeSummaryBtn=document.getElementById("closeSummary");
+const letsStartBtn = document.getElementById("letsStart");
+const stopSubmitBtn = document.getElementById("stopSubmit");
+const closeSummaryBtn = document.getElementById("closeSummary");
 
-function idx(r,c){return r*COLS+c}
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}}
-function formatTime(s){const m=Math.floor(s/60);const ss=s%60;return `${m}:${ss<10?"0"+ss:ss}`}
+function idx(r,c){ return r*COLS + c; }
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } }
+function formatTime(s){ const m=Math.floor(s/60), ss=s%60; return `${m}:${ss<10?"0"+ss:ss}`; }
 
-/* ------------- MAZE GENERATOR ------------- */
+/* Toast helper */
+function showToast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 1200);
+}
+
+/* MAZE GENERATOR */
 function generatePerfectMaze(){
-  const base=Array.from({length:9},()=>({u:true,r:true,d:true,l:true}));
-  const visited=Array(9).fill(false);
-  const stack=[[startPos.r,startPos.c]];
-  visited[idx(startPos.r,startPos.c)]=true;
+  const base = Array.from({length:9}, ()=>({u:true,r:true,d:true,l:true}));
+  const visited = Array(9).fill(false);
+  const stack = [[startPos.r,startPos.c]];
+  visited[idx(startPos.r,startPos.c)] = true;
 
   while(stack.length){
-    const [r,c]=stack[stack.length-1];
-    const dirs=[[r-1,c,'u'],[r,c+1,'r'],[r+1,c,'d'],[r,c-1,'l']];
-    const nbrs=dirs.filter(([nr,nc])=>nr>=0&&nr<3&&nc>=0&&nc<3 && !visited[idx(nr,nc)]);
-    if(!nbrs.length){stack.pop();continue;}
-    const [nr,nc,dir]=nbrs[Math.floor(Math.random()*nbrs.length)];
-    if(dir==='u'){base[idx(r,c)].u=false;base[idx(nr,nc)].d=false;}
-    if(dir==='r'){base[idx(r,c)].r=false;base[idx(nr,nc)].l=false;}
-    if(dir==='d'){base[idx(r,c)].d=false;base[idx(nr,nc)].u=false;}
-    if(dir==='l'){base[idx(r,c)].l=false;base[idx(nr,nc)].r=false;}
-    visited[idx(nr,nc)]=true;
+    const [r,c] = stack[stack.length-1];
+    const dirs = [[r-1,c,'u'],[r,c+1,'r'],[r+1,c,'d'],[r,c-1,'l']];
+    const nbr = dirs.filter(([nr,nc]) => nr>=0&&nr<3&&nc>=0&&nc<3 && !visited[idx(nr,nc)]);
+    if(!nbr.length){ stack.pop(); continue; }
+    const [nr,nc,dir] = nbr[Math.floor(Math.random()*nbr.length)];
+    if(dir==='u'){ base[idx(r,c)].u=false; base[idx(nr,nc)].d=false; }
+    if(dir==='r'){ base[idx(r,c)].r=false; base[idx(nr,nc)].l=false; }
+    if(dir==='d'){ base[idx(r,c)].d=false; base[idx(nr,nc)].u=false; }
+    if(dir==='l'){ base[idx(r,c)].l=false; base[idx(nr,nc)].r=false; }
+    visited[idx(nr,nc)] = true;
     stack.push([nr,nc]);
   }
   return base;
 }
 
 function buildGrid(){
-  gridEl.innerHTML="";
-  const maze=generatePerfectMaze();
-  cells=[];
+  gridEl.innerHTML = "";
+  const maze = generatePerfectMaze();
+  cells = [];
   for(let r=0;r<3;r++){
     for(let c=0;c<3;c++){
-      let d=document.createElement("div");
-      d.className="cell";
-      d.onclick=()=>onCellClick(r,c);
+      const d = document.createElement("div");
+      d.className = "cell";
+      d.onclick = ()=>onCellClick(r,c);
       gridEl.appendChild(d);
       cells.push({r,c,walls:maze[idx(r,c)]});
     }
   }
 }
 
-/* BFS safe reachable */
+/* REACHABLE CELLS (for key placement) */
 function getReachableAvoidingDoor(){
-  const q=[[startPos.r,startPos.c]];
-  const seen=Array(9).fill(false);
-  seen[idx(startPos.r,startPos.c)]=true;
-  const out=[];
+  const q = [[startPos.r,startPos.c]];
+  const seen = Array(9).fill(false);
+  seen[idx(startPos.r,startPos.c)] = true;
+  const out = [];
   while(q.length){
-    const [r,c]=q.shift();
+    const [r,c] = q.shift();
     out.push({r,c});
-    const w=cells[idx(r,c)].walls;
-    const nbrs=[];
-    if(!w.u)nbrs.push([r-1,c]);
-    if(!w.r)nbrs.push([r,c+1]);
-    if(!w.d)nbrs.push([r+1,c]);
-    if(!w.l)nbrs.push([r,c-1]);
-    for(const[nr,nc] of nbrs){
-      if(nr<0||nr>=3||nc<0||nc>=3)continue;
-      if(nr===door.r&&nc===door.c)continue;
+    const w = cells[idx(r,c)].walls;
+    const nbr = [];
+    if(!w.u) nbr.push([r-1,c]);
+    if(!w.r) nbr.push([r,c+1]);
+    if(!w.d) nbr.push([r+1,c]);
+    if(!w.l) nbr.push([r,c-1]);
+    for(const [nr,nc] of nbr){
+      if(nr<0||nr>=3||nc<0||nc>=3) continue;
+      if(nr===door.r && nc===door.c) continue;
       if(!seen[idx(nr,nc)]){
-        seen[idx(nr,nc)]=true;
+        seen[idx(nr,nc)] = true;
         q.push([nr,nc]);
       }
     }
@@ -306,130 +356,169 @@ function getReachableAvoidingDoor(){
   return out;
 }
 
-/* KEY PLACEMENT */
+/* KEYS */
 function placeKeysRandom(){
-  keys=[];originalKeys=[];keysCollected=0;
-  let desired=Math.random()<0.65?1:2;
-  let attempts=0; let reachable=[];
+  keys = []; originalKeys = []; keysCollected = 0;
+  let desired = Math.random()<0.65 ? 1 : 2;
+  let attempts = 0;
+  let reachable = [];
   while(attempts<20){
-    reachable=getReachableAvoidingDoor()
-      .filter(c=>!(c.r===startPos.r&&c.c===startPos.c)&&!(c.r===door.r&&c.c===door.c));
-    if(reachable.length>=desired)break;
-    buildGrid();placeEntities();
+    reachable = getReachableAvoidingDoor()
+      .filter(c => !(c.r===startPos.r && c.c===startPos.c) && !(c.r===door.r && c.c===door.c));
+    if(reachable.length>=desired) break;
+    buildGrid(); placeEntities();
     attempts++;
   }
-  if(reachable.length<desired)desired=Math.max(1,reachable.length);
-  keysNeeded=desired;
+  if(reachable.length<desired) desired = Math.max(1, reachable.length);
+  keysNeeded = desired;
   shuffle(reachable);
   for(let i=0;i<keysNeeded;i++){
     keys.push({...reachable[i]});
     originalKeys.push({...reachable[i]});
   }
+  keysLabelEl.textContent = keysNeeded===1 ? "1 KEY" : keysNeeded + " KEYS";
 }
 
-/* Entities */
+/* PLAYER / DOOR POSITIONS */
 function placeEntities(){
-  startPos={r:1,c:1};
-  player={r:1,c:1};
-  door={r:2,c:2};
+  startPos = {r:1,c:1};
+  player   = {r:1,c:1};
+  door     = {r:2,c:2};
 }
 
-/* Render */
+/* PATH TRACKING HELPERS */
+function markPath(r,c){
+  gridEl.children[idx(r,c)].classList.add("path");
+}
+function clearPath(){
+  document.querySelectorAll(".cell.path").forEach(el=>el.classList.remove("path"));
+}
+
+/* RENDER */
 function render(){
-  const all=document.querySelectorAll(".cell");
-  all.forEach(el=>{el.innerHTML="";el.classList.remove("hit")});
-  keys.forEach(k=>{
-    gridEl.children[idx(k.r,k.c)].innerHTML='<div class="key">🔑</div>';
+  const all = document.querySelectorAll(".cell");
+  all.forEach(el => { el.innerHTML = ""; el.classList.remove("hit","player-cell"); });
+
+  // keys
+  keys.forEach(k => {
+    const keyCell = gridEl.children[idx(k.r,k.c)];
+    keyCell.innerHTML = '<div class="key">🗝️</div>';
   });
-  gridEl.children[idx(door.r,door.c)].innerHTML='<div class="door">🚪</div>';
-  gridEl.children[idx(player.r,player.c)].innerHTML='<div class="player">🙂</div>';
+
+  // door
+  const doorCell = gridEl.children[idx(door.r,door.c)];
+  doorCell.innerHTML = '<div class="door"></div>';
+
+  // player
+  const pCell = gridEl.children[idx(player.r,player.c)];
+  pCell.classList.add("player-cell");
+  pCell.innerHTML = `
+    <svg class="player-icon" viewBox="0 0 24 24" fill="white">
+      <circle cx="12" cy="7" r="4"></circle>
+      <path d="M4 20c0-4 4-6 8-6s8 2 8 6" stroke="white" stroke-width="2" fill="none"/>
+    </svg>
+  `;
 }
 
-/* Path */
-function markPath(r,c){gridEl.children[idx(r,c)].classList.add("path")}
-function clearPath(){document.querySelectorAll(".path").forEach(el=>el.classList.remove("path"))}
-
-/* Movement */
+/* MOVEMENT */
 function onCellClick(r,c){
-  if(!running)return;
-  if(Math.abs(r-player.r)+Math.abs(c-player.c)!==1)return;
+  if(!running) return;
+  if(Math.abs(r-player.r)+Math.abs(c-player.c)!==1) return;
   attemptMove(r,c);
 }
 
 function attemptMove(tr,tc){
-  let dr=tr-player.r,dc=tc-player.c;
-  let dir=null;
-  if(dr==-1)dir='u';
-  if(dr==1)dir='d';
-  if(dc==-1)dir='l';
-  if(dc==1)dir='r';
+  let dr = tr-player.r, dc = tc-player.c;
+  let dir = null;
+  if(dr===-1) dir='u';
+  if(dr===1 ) dir='d';
+  if(dc===-1) dir='l';
+  if(dc===1 ) dir='r';
 
-  /* Door block */
-  if(tr===door.r&&tc===door.c&&keysCollected<keysNeeded){
-    let el=gridEl.children[idx(tr,tc)];
-    el.classList.add("hit");setTimeout(()=>el.classList.remove("hit"),300);
-    gridEl.classList.add("shake");setTimeout(()=>gridEl.classList.remove("shake"),400);
+  // door blocked if keys not collected -> show popup instead of silent block
+  if(tr===door.r && tc===door.c && keysCollected<keysNeeded){
+    if(keysNeeded === 1){
+      showToast("Collect the key and come to the door");
+    }else{
+      showToast(`Collect ${keysNeeded} keys and come to the door`);
+    }
+    gridEl.children[idx(tr,tc)].classList.add("hit");
+    gridEl.classList.add("shake");
+    setTimeout(()=>gridEl.classList.remove("shake"),300);
     return;
   }
 
-  const cur=cells[idx(player.r,player.c)];
-  if(cur.walls[dir]){
-    let el=gridEl.children[idx(tr,tc)];
-    el.classList.add("hit");setTimeout(()=>el.classList.remove("hit"),300);
-    gridEl.classList.add("shake");setTimeout(()=>gridEl.classList.remove("shake"),400);
+  const cur = cells[idx(player.r,player.c)];
 
-    keys=originalKeys.map(x=>({...x}));
-    keysCollected=0;
+  // wall hit
+  if(cur.walls[dir]){
+    const el = gridEl.children[idx(tr,tc)];
+    el.classList.add("hit");
+    gridEl.classList.add("shake");
+    setTimeout(()=>gridEl.classList.remove("shake"),300);
+
+    // reset keys, path, player
+    keys = originalKeys.map(k=>({...k}));
+    keysCollected = 0;
     clearPath();
-    player={...startPos};
-    moves=0;
+    player = {...startPos};
+    moves = 0;
     render();
     return;
   }
 
+  // successful move: mark old cell as path
   markPath(player.r,player.c);
-  player={r:tr,c:tc};
-  markPath(player.r,player.c);
+
+  player = {r:tr,c:tc};
   moves++;
 
-  const f=keys.findIndex(k=>k.r===player.r&&k.c===player.c);
-  if(f!=-1){keys.splice(f,1);keysCollected++;}
+  // collect key
+  const fi = keys.findIndex(k => k.r===player.r && k.c===player.c);
+  if(fi !== -1){
+    keys.splice(fi,1);
+    keysCollected++;
+  }
 
   render();
 
-  if(keysCollected>=keysNeeded&&player.r===door.r&&player.c===door.c)endRound(true);
+  // if all keys collected and at door
+  if(keysCollected>=keysNeeded && player.r===door.r && player.c===door.c){
+    endRound(true);
+  }
 }
 
-window.onkeydown=(e)=>{
-  if(!running)return;
-  let r=player.r,c=player.c;
-  if(e.key==='ArrowUp'||e.key==='w')r--;
-  if(e.key==='ArrowDown'||e.key==='s')r++;
-  if(e.key==='ArrowLeft'||e.key==='a')c--;
-  if(e.key==='ArrowRight'||e.key==='d')c++;
-  if(r>=0&&r<3&&c>=0&&c<3)attemptMove(r,c);
+window.onkeydown = e => {
+  if(!running) return;
+  let r = player.r, c = player.c;
+  if(e.key==='ArrowUp' || e.key==='w' || e.key==='W') r--;
+  if(e.key==='ArrowDown' || e.key==='s' || e.key==='S') r++;
+  if(e.key==='ArrowLeft' || e.key==='a' || e.key==='A') c--;
+  if(e.key==='ArrowRight' || e.key==='d' || e.key==='D') c++;
+  if(r>=0 && r<3 && c>=0 && c<3) attemptMove(r,c);
 };
 
-/* Round control */
+/* ROUND CONTROL */
 function startRound(){
   round++;
   buildGrid();
   placeEntities();
   placeKeysRandom();
-  moves=0;keysCollected=0;
+  moves = 0;
+  keysCollected = 0;
   clearPath();
   render();
 
-  running=true;
-  roundStartTime=Date.now();
-  roundSeconds=180;
-  timerEl.textContent=formatTime(roundSeconds);
+  running = true;
+  roundSeconds = 180;
+  timerEl.textContent = formatTime(roundSeconds);
+  roundStartTime = Date.now();
 
   clearInterval(roundTimer);
-  roundTimer=setInterval(()=>{
+  roundTimer = setInterval(()=>{
     roundSeconds--;
-    timerEl.textContent=formatTime(roundSeconds);
-    if(roundSeconds<=0)endRound(false);
+    timerEl.textContent = formatTime(roundSeconds);
+    if(roundSeconds <= 0) endRound(false);
   },1000);
 
   introEl.classList.add("hidden");
@@ -438,19 +527,20 @@ function startRound(){
 }
 
 function endRound(solved){
-  clearInterval(roundTimer);running=false;
-  const timeTaken=Math.floor((Date.now()-roundStartTime)/1000);
-  sessionResults.push({round,timeTaken,moves,keys:keysCollected,solved});
+  running=false;
+  clearInterval(roundTimer);
+  const t = Math.floor((Date.now() - roundStartTime)/1000);
+  sessionResults.push({round, time: t, moves, keys: keysCollected, solved});
   setTimeout(()=>startRound(),300);
 }
 
-/* Stop & Summary */
-stopSubmitBtn.onclick=()=>{
+/* SUMMARY */
+stopSubmitBtn.onclick = ()=>{
   if(running){
-    clearInterval(roundTimer);
     running=false;
-    const timeTaken=Math.floor((Date.now()-roundStartTime)/1000);
-    sessionResults.push({round,timeTaken,moves,keys:keysCollected,solved:false});
+    clearInterval(roundTimer);
+    const t = Math.floor((Date.now() - roundStartTime)/1000);
+    sessionResults.push({round, time: t, moves, keys: keysCollected, solved:false});
   }
   showSummary();
 };
@@ -458,28 +548,23 @@ stopSubmitBtn.onclick=()=>{
 function showSummary(){
   gameEl.classList.add("hidden");
   summaryEl.classList.remove("hidden");
-  summaryTableBody.innerHTML="";
-
-  for(const r of sessionResults){
-    const tr=document.createElement("tr");
-    tr.innerHTML=`
+  summaryTable.innerHTML = "";
+  sessionResults.forEach(r=>{
+    summaryTable.innerHTML += `<tr>
       <td>${r.round}</td>
-      <td>${Math.floor(r.timeTaken/60)}m ${r.timeTaken%60}s</td>
+      <td>${Math.floor(r.time/60)}m ${r.time%60}s</td>
       <td>${r.moves}</td>
-      <td>${r.keys}</td>`;
-    summaryTableBody.appendChild(tr);
-  }
+      <td>${r.keys}</td>
+    </tr>`;
+  });
 }
 
-closeSummaryBtn.onclick=()=>{
+closeSummaryBtn.onclick = ()=>{
   summaryEl.classList.add("hidden");
   introEl.classList.remove("hidden");
 };
 
-/* Start */
-letsStartBtn.onclick=startRound;
-
+letsStartBtn.onclick = startRound;
 </script>
 </body>
 </html>
-
