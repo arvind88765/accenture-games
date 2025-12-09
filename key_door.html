@@ -427,63 +427,63 @@ function onCellClick(r,c){
   attemptMove(r,c);
 }
 
-function attemptMove(tr,tc){
-  let dr = tr-player.r, dc = tc-player.c;
+function attemptMove(tr, tc) {
+  let dr = tr - player.r, dc = tc - player.c;
   let dir = null;
-  if(dr===-1) dir='u';
-  if(dr===1 ) dir='d';
-  if(dc===-1) dir='l';
-  if(dc===1 ) dir='r';
+  if (dr === -1) dir = 'u';
+  if (dr === 1) dir = 'd';
+  if (dc === -1) dir = 'l';
+  if (dc === 1) dir = 'r';
 
-  // door blocked if keys not collected -> show popup instead of silent block
-  if(tr===door.r && tc===door.c && keysCollected<keysNeeded){
-    if(keysNeeded === 1){
+  // touching DOOR without enough keys
+  if (tr === door.r && tc === door.c && keysCollected < keysNeeded) {
+    if (keysNeeded === 1) {
       showToast("Collect the key and come to the door");
-    }else{
+    } else {
       showToast(`Collect ${keysNeeded} keys and come to the door`);
     }
-    gridEl.children[idx(tr,tc)].classList.add("hit");
+
+    gridEl.children[idx(tr, tc)].classList.add("hit");
     gridEl.classList.add("shake");
-    setTimeout(()=>gridEl.classList.remove("shake"),300);
+    setTimeout(() => gridEl.classList.remove("shake"), 300);
     return;
   }
 
-  const cur = cells[idx(player.r,player.c)];
+  const cur = cells[idx(player.r, player.c)];
 
-  // wall hit
-  if(cur.walls[dir]){
-    const el = gridEl.children[idx(tr,tc)];
-    el.classList.add("hit");
+  // WALL HIT → instant reset to start
+  if (cur.walls[dir]) {
+    const pCell = gridEl.children[idx(player.r, player.c)];
+    pCell.classList.add("hit");
     gridEl.classList.add("shake");
-    setTimeout(()=>gridEl.classList.remove("shake"),300);
+    setTimeout(() => gridEl.classList.remove("shake"), 250);
 
-    // reset keys, path, player
-    keys = originalKeys.map(k=>({...k}));
+    // RESET STATE IMMEDIATELY
+    player = { ...startPos };
+    keys = originalKeys.map(k => ({ ...k }));
     keysCollected = 0;
-    clearPath();
-    player = {...startPos};
     moves = 0;
+    clearPath();
     render();
     return;
   }
 
-  // successful move: mark old cell as path
-  markPath(player.r,player.c);
-
-  player = {r:tr,c:tc};
+  // SUCCESSFUL MOVE
+  markPath(player.r, player.c);
+  player = { r: tr, c: tc };
   moves++;
 
   // collect key
-  const fi = keys.findIndex(k => k.r===player.r && k.c===player.c);
-  if(fi !== -1){
-    keys.splice(fi,1);
+  const fi = keys.findIndex(k => k.r === player.r && k.c === player.c);
+  if (fi !== -1) {
+    keys.splice(fi, 1);
     keysCollected++;
   }
 
   render();
 
-  // if all keys collected and at door
-  if(keysCollected>=keysNeeded && player.r===door.r && player.c===door.c){
+  // win condition
+  if (keysCollected >= keysNeeded && player.r === door.r && player.c === door.c) {
     endRound(true);
   }
 }
