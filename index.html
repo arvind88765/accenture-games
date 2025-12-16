@@ -87,8 +87,11 @@
     color:var(--accent-2);
     font-size:28px;
     font-weight:800;
+    letter-spacing:.5px;
     text-shadow:0 4px 16px rgba(124,58,237,0.3);
   }
+
+  /* ================= GAME CARDS ================= */
 
   .games-row{
     margin-top:38px;
@@ -112,6 +115,14 @@
     flex-direction:column;
     align-items:flex-start;
     text-align:left;
+    transition:transform .25s ease, box-shadow .25s, border-color .25s;
+  }
+
+  /* ✅ HOVER EFFECT (UNCHANGED) */
+  .game-card:hover{
+    transform:translateY(-14px);
+    border-color:rgba(155,92,255,0.4);
+    box-shadow:0 28px 70px rgba(9,6,15,0.8);
   }
 
   .game-top{
@@ -127,6 +138,7 @@
     border-radius:18px;
     background:linear-gradient(180deg, rgba(124,58,237,0.14), rgba(124,58,237,0.06));
     border:1px solid rgba(155,92,255,0.20);
+    box-shadow:0 12px 28px rgba(124,58,237,0.22);
     font-size:34px;
     display:flex;
     align-items:center;
@@ -137,21 +149,25 @@
   .game-title{
     font-size:20px;
     font-weight:700;
+    margin:0;
+    color:#f3f3f7;
   }
 
   .game-desc{
     font-size:14px;
     color:var(--muted);
     margin-top:6px;
+    line-height:1.45;
   }
 
   .card-footer{
+    display:flex;
     width:100%;
     margin-top:22px;
   }
 
   .play-btn{
-    width:100%;
+    flex:1;
     padding:14px;
     border:none;
     border-radius:14px;
@@ -159,7 +175,11 @@
     font-weight:800;
     color:white;
     cursor:pointer;
+    box-shadow:0 14px 34px rgba(124,58,237,0.22);
+    transition:transform .18s;
   }
+
+  .play-btn:active{ transform:translateY(2px); }
 
   footer{
     margin-top:36px;
@@ -172,27 +192,32 @@
     bottom:18px;
     right:22px;
     font-size:14px;
+    font-weight:600;
     color:rgba(155,92,255,0.85);
-    background:rgba(255,255,255,0.04);
+    backdrop-filter:blur(4px);
     padding:6px 12px;
     border-radius:12px;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(155,92,255,0.12);
   }
 
-  /* ===== RESTORE GAME CARD HOVER (SAFE) ===== */
-.game-card{
-  transition:transform .25s ease, box-shadow .25s, border-color .25s;
-}
+  /* ================= EXISTING MODAL ================= */
 
-.game-card:hover{
-  transform:translateY(-14px);
-  border-color:rgba(155,92,255,0.4);
-  box-shadow:0 28px 70px rgba(9,6,15,0.8);
-}
-
+  .coming-modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.55);
+    backdrop-filter:blur(6px);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+  }
 
   .hidden{display:none;}
 
-  /* COMM POPUP */
+  /* ================= NEW COMM POPUP (ADDED ONLY) ================= */
+
   .comm-modal{
     position:fixed;
     inset:0;
@@ -202,6 +227,10 @@
     align-items:center;
     justify-content:center;
     z-index:10000;
+  }
+
+  .comm-modal[data-state="hidden"]{
+    display:none !important;
   }
 
   .comm-box{
@@ -229,12 +258,12 @@
     cursor:pointer;
   }
 
-  .primary{
+  .comm-primary{
     background:linear-gradient(90deg,#8b5cf6,#6b21a8);
     color:white;
   }
 
-  .secondary{
+  .comm-secondary{
     background:rgba(255,255,255,0.06);
     color:#e2e7f0;
     border:1px solid rgba(155,92,255,0.25);
@@ -243,6 +272,7 @@
 </head>
 
 <body>
+
 <div class="wrap">
   <div class="bg-blur"></div>
 
@@ -252,15 +282,18 @@
   </header>
 
   <div class="games-row">
+
     <div class="game-card">
       <div class="game-top">
         <div class="game-icon">🔐</div>
         <div>
           <div class="game-title">Key Maze Challenge</div>
-          <div class="game-desc">Collect keys and escape the maze.</div>
+          <div class="game-desc">Collect Keys, avoid walls, escape.</div>
         </div>
       </div>
-      <button class="play-btn" onclick="location.href='/maze'">Play</button>
+      <div class="card-footer">
+        <button class="play-btn" onclick="location.href='/maze'">Play</button>
+      </div>
     </div>
 
     <div class="game-card">
@@ -271,7 +304,9 @@
           <div class="game-desc">Fast-paced math drills.</div>
         </div>
       </div>
-      <button class="play-btn" onclick="location.href='/math'">Play</button>
+      <div class="card-footer">
+        <button class="play-btn" onclick="location.href='/math'">Play</button>
+      </div>
     </div>
 
     <div class="game-card">
@@ -282,21 +317,33 @@
           <div class="game-desc">Under development.</div>
         </div>
       </div>
-      <button class="play-btn" onclick="alert('Under Development')">Play</button>
+      <div class="card-footer">
+        <button class="play-btn" onclick="showComingSoon()">Play</button>
+      </div>
     </div>
+
   </div>
 
   <footer>© Accenture Gaming • Neon Cyber Glass Edition</footer>
 </div>
 
-<!-- COMMUNICATION POPUP -->
-<div id="commModal" class="comm-modal hidden">
+<!-- Existing Coming Soon Modal -->
+<div id="comingSoonModal" class="coming-modal hidden">
+  <div class="coming-box">
+    <h2>🚧 Under Development</h2>
+    <p>This game is still being built.</p>
+    <button class="close-btn" onclick="closeComingSoon()">OK</button>
+  </div>
+</div>
+
+<!-- NEW COMMUNICATION POPUP -->
+<div id="commModal" class="comm-modal" data-state="hidden">
   <div class="comm-box">
     <h2>🗣 Communication Practice</h2>
-    <p>Practice real interview-style communication assessments for free.</p>
+    <p>Practice interview-style communication for free.</p>
     <div class="comm-actions">
-      <button class="comm-btn secondary" onclick="later()">Later</button>
-      <button class="comm-btn primary" onclick="tryNow()">Try Now</button>
+      <button class="comm-btn comm-secondary" onclick="commLater()">Later</button>
+      <button class="comm-btn comm-primary" onclick="commTryNow()">Try Now</button>
     </div>
   </div>
 </div>
@@ -304,29 +351,39 @@
 <div class="signature">Made with ❤️ by Rvind</div>
 
 <script>
-const FIRST_DELAY = 800;
+/* ORIGINAL JS */
+function showComingSoon(){
+  document.getElementById("comingSoonModal").classList.remove("hidden");
+}
+function closeComingSoon(){
+  document.getElementById("comingSoonModal").classList.add("hidden");
+}
 
+/* NEW POPUP JS */
+const COMM_DELAY = 800;
 window.addEventListener("load", () => {
   if (localStorage.getItem("comm_never")) return;
   if (sessionStorage.getItem("comm_later")) return;
-
   setTimeout(() => {
-    document.getElementById("commModal").classList.remove("hidden");
-  }, FIRST_DELAY);
+    document.getElementById("commModal")
+      .setAttribute("data-state","visible");
+  }, COMM_DELAY);
 });
 
-function later(){
-  sessionStorage.setItem("comm_later", "yes");
-  document.getElementById("commModal").classList.add("hidden");
+function commLater(){
+  sessionStorage.setItem("comm_later","yes");
+  document.getElementById("commModal")
+    .setAttribute("data-state","hidden");
 }
 
-function tryNow(){
-  localStorage.setItem("comm_never", "yes");
-  window.open("https://communication.up.railway.app/", "_blank");
+function commTryNow(){
+  localStorage.setItem("comm_never","yes");
+  document.getElementById("commModal")
+    .setAttribute("data-state","hidden");
+  window.open("https://communication.up.railway.app/","_blank");
 }
 </script>
 
 <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
-
