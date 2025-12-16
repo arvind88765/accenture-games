@@ -293,32 +293,24 @@
 
 <script>
 const FIRST_DELAY = 800;
-const AGAIN_DELAY = 180000; // 3 minutes
 
 window.addEventListener("load", () => {
   if (localStorage.getItem("comm_never")) return;
-  setTimeout(showPopup, FIRST_DELAY);
-});
-
-function showPopup(){
-  const modal = document.getElementById("commModal");
-  modal.classList.remove("hidden");
+  if (sessionStorage.getItem("comm_later")) return;
 
   setTimeout(() => {
-    if (!sessionStorage.getItem("comm_later")) {
-      modal.classList.remove("hidden");
-    }
-  }, AGAIN_DELAY);
-}
+    document.getElementById("commModal").classList.remove("hidden");
+  }, FIRST_DELAY);
+});
 
 function later(){
-  sessionStorage.setItem("comm_later","yes");
+  sessionStorage.setItem("comm_later", "yes");
   document.getElementById("commModal").classList.add("hidden");
 }
 
 function tryNow(){
-  localStorage.setItem("comm_never","yes");
-  window.open("https://communication.up.railway.app/","_blank");
+  localStorage.setItem("comm_never", "yes");
+  window.open("https://communication.up.railway.app/", "_blank");
 }
 </script>
 
