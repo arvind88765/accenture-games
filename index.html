@@ -7,7 +7,6 @@
 
 <link rel="icon" type="image/png" href="/favicon-32x32.png">
 <link rel="shortcut icon" type="image/png" href="/favicon-32x32.png">
-
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 
 <style>
@@ -108,7 +107,7 @@
     padding:22px;
     border:1px solid rgba(124,58,237,0.14);
     box-shadow:0 20px 48px rgba(5,4,10,0.65);
-    backdrop-filter:blur(8px);
+    backdrop-filter:blur(8px) saturate(150%);
     display:flex;
     flex-direction:column;
     align-items:flex-start;
@@ -132,6 +131,7 @@
     display:flex;
     align-items:center;
     justify-content:center;
+    color:var(--accent-1);
   }
 
   .game-title{
@@ -187,8 +187,8 @@
     background:rgba(0,0,0,0.6);
     backdrop-filter:blur(6px);
     display:flex;
-    justify-content:center;
     align-items:center;
+    justify-content:center;
     z-index:10000;
   }
 
@@ -277,14 +277,14 @@
   <footer>© Accenture Gaming • Neon Cyber Glass Edition</footer>
 </div>
 
-<!-- COMM POPUP -->
+<!-- COMMUNICATION POPUP -->
 <div id="commModal" class="comm-modal hidden">
   <div class="comm-box">
     <h2>🗣 Communication Practice</h2>
     <p>Practice real interview-style communication assessments for free.</p>
     <div class="comm-actions">
-      <button class="comm-btn secondary" onclick="closeComm()">Later</button>
-      <button class="comm-btn primary" onclick="goComm()">Try Now</button>
+      <button class="comm-btn secondary" onclick="later()">Later</button>
+      <button class="comm-btn primary" onclick="tryNow()">Try Now</button>
     </div>
   </div>
 </div>
@@ -293,30 +293,32 @@
 
 <script>
 const FIRST_DELAY = 800;
-const AGAIN_DELAY = 180000;
+const AGAIN_DELAY = 180000; // 3 minutes
 
 window.addEventListener("load", () => {
-  if (localStorage.getItem("comm_closed")) return;
-  setTimeout(showComm, FIRST_DELAY);
+  if (localStorage.getItem("comm_never")) return;
+  setTimeout(showPopup, FIRST_DELAY);
 });
 
-function showComm(){
-  document.getElementById("commModal").classList.remove("hidden");
+function showPopup(){
+  const modal = document.getElementById("commModal");
+  modal.classList.remove("hidden");
+
   setTimeout(() => {
-    if (!localStorage.getItem("comm_closed")) {
-      document.getElementById("commModal").classList.remove("hidden");
+    if (!sessionStorage.getItem("comm_later")) {
+      modal.classList.remove("hidden");
     }
   }, AGAIN_DELAY);
 }
 
-function closeComm(){
-  localStorage.setItem("comm_closed", "yes");
+function later(){
+  sessionStorage.setItem("comm_later","yes");
   document.getElementById("commModal").classList.add("hidden");
 }
 
-function goComm(){
-  localStorage.setItem("comm_closed", "yes");
-  window.open("https://communication.up.railway.app/", "_blank");
+function tryNow(){
+  localStorage.setItem("comm_never","yes");
+  window.open("https://communication.up.railway.app/","_blank");
 }
 </script>
 
